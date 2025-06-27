@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="./public/icon/icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./src/css/styles.css">
+  <title>Administrador de tienda</title>
+</head>
+
+<body>
+  <header>
+    <h1>ADMINISTRADOR DE TIENDA</h1>
+  </header>
+
+  <main>
+    <form action="#" class="create">
+
+      <input id="name" type="text" onKeyDown="blockNumber(e)" placeholder="NOMBRE">
+      <input id="precio" type="number" placeholder="PRECIO">
+      <button id="btn-create">AGREGAR PRODUCTO</button>
+
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>NOMBRE</th>
+          <th>PRECIO</th>
+          <th>ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody id="product-table-body">
+        <!-- agregar filas de los productos nuevos-->
+      </tbody>
+    </table>
+
+  </main>
+  <footer>
+  </footer>
+  <script type="module" src="./src/js/main.js"></script>
+</body>
+
+</html>
