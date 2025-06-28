@@ -13,7 +13,7 @@ This is an inventory system with basic operations like a crude oil, where the na
 - `Functionality 4`: delete a product from inventory.
 
 
-## Table of contents
+## :paperclip: Table of contents :paperclip:
 
 - Public
 - Folder SRC for the resources (of the index)
@@ -22,9 +22,9 @@ This is an inventory system with basic operations like a crude oil, where the na
 - Index (Pricipal Page)
 - package.json(system dependencies)
 
-## Technologies
-Implement HTML, CSS,JS,vite,alertasweetalert2.
+## :computer: Technologies :computer:
+Implement HTML, CSS, JS, vite , alertasweetalert2 .
 
-## Author
+## :bust_in_silhouette: Author :bust_in_silhouette:
 
-Keyner Andres Barrios Ochoa- RIWI CODER
+Keyner Andres Barrios Ochoa - RIWI CODER
