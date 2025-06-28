@@ -1,3 +1,4 @@
+import Swal from "sweetalert2"
 
 let products = []
 const $btn = document.getElementById("btn-create")
