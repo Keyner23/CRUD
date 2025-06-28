@@ -1,13 +1,16 @@
 import Swal from "sweetalert2"
 
-let products = []
-const $btn = document.getElementById("btn-create")
-const $nombre = document.getElementById("name")
-const $precio = document.getElementById("precio")
-const $productTableBody = document.getElementById("product-table-body")
-let currentEditId = null; 
+let products = [];
+let productNames = new Set();
+const $btn = document.getElementById("btn-create");
+const $nombre = document.getElementById("name");
+const $precio = document.getElementById("precio");
+const $productTableBody = document.getElementById("product-table-body");
+let currentEditId = null;
 
 $btn.addEventListener("click", function () {
+    const nameUpper = $nombre.value.toUpperCase();
+
     if ($nombre.value === "" || $precio.value === "") {
         Swal.fire({
             title: "Error",
@@ -17,21 +20,36 @@ $btn.addEventListener("click", function () {
         });
         return;
     }
+
+
+    if (!currentEditId && productNames.has(nameUpper)) {
+        Swal.fire({
+            title: "Error",
+            text: `el producto ${$nombre.value} ya existe`,
+            icon: "error",
+            timer: 2500
+        });
+        return;
+    }
+
     if (currentEditId) {
-        updateProduct(); 
+        updateProduct();
     } else {
         saveProduct();
     }
 });
 
 function saveProduct() {
+    const nameUpper = $nombre.value.toUpperCase();
+
     let newProduct = {
         id: products.length + 1,
-        name: $nombre.value.toUpperCase(),
+        name: nameUpper,
         precio: `$ ${$precio.value}`,
-    }
+    };
 
     products.push(newProduct);
+    productNames.add(nameUpper);
     addRowToTable(newProduct);
 
     Swal.fire({
@@ -59,14 +77,14 @@ function addRowToTable(product) {
 
     let btnEliminar = document.createElement("button");
     btnEliminar.innerText = "Eliminar";
-    btnEliminar.id="btn-delete"
+    btnEliminar.id = "btn-delete";
     btnEliminar.onclick = function () {
         deleteProduct(nuevaFila, product.id);
     };
 
     let btnUpdate = document.createElement("button");
     btnUpdate.innerText = "Editar";
-    btnUpdate.id="btn-update"
+    btnUpdate.id = "btn-update";
     btnUpdate.onclick = () => {
         editProduct(product);
     };
@@ -78,20 +96,36 @@ function addRowToTable(product) {
 function editProduct(product) {
     $nombre.value = product.name;
     $precio.value = product.precio.replace('$ ', '');
-    currentEditId = product.id; 
+    currentEditId = product.id;
 }
 
 function updateProduct() {
+    const nameUpper = $nombre.value.toUpperCase();
+    const originalProduct = products.find(p => p.id === currentEditId);
+
+
+    if (originalProduct.name !== nameUpper && productNames.has(nameUpper)) {
+        Swal.fire({
+            title: "Error",
+            text: "El nombre del producto ya existe.",
+            icon: "error",
+            timer: 2000
+        });
+        return;
+    }
+
+
+    productNames.delete(originalProduct.name);
+    productNames.add(nameUpper);
+
     let updatedProduct = {
         id: currentEditId,
-        name: $nombre.value.toUpperCase(),
+        name: nameUpper,
         precio: `$ ${$precio.value}`,
     };
 
-    
     products = products.map(product => product.id === currentEditId ? updatedProduct : product);
 
-    
     const row = Array.from($productTableBody.rows).find(row => row.cells[0].innerText == currentEditId);
     row.cells[1].innerText = updatedProduct.name;
     row.cells[2].innerText = updatedProduct.precio;
@@ -118,6 +152,8 @@ function deleteProduct(fila, id) {
         confirmButtonText: "Si!"
     }).then((result) => {
         if (result.isConfirmed) {
+            const productToDelete = products.find(p => p.id === id);
+            productNames.delete(productToDelete.name); // <-- NUEVO
             products = products.filter(producto => producto.id !== id);
             fila.remove();
             Swal.fire({
@@ -132,5 +168,5 @@ function deleteProduct(fila, id) {
 function resetForm() {
     $nombre.value = "";
     $precio.value = "";
-    currentEditId = null; 
+    currentEditId = null;
 }
