@@ -3,42 +3,65 @@
 
 <head>
   <meta charset="UTF-8" />
+  <!-- Ensures proper display and zoom on all devices -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Website icon (favicon) shown in the browser tab -->
   <link rel="icon" href="./public/icon/icon.ico" type="image/x-icon">
+
+  <!-- Link to your external CSS stylesheet -->
   <link rel="stylesheet" href="./src/css/styles.css">
+
+  <!-- Page title shown in the browser tab -->
   <title>Administrador de tienda</title>
 </head>
 
 <body>
+
+  <!-- Website header with the main title -->
   <header>
     <h1>ADMINISTRADOR DE TIENDA</h1>
   </header>
 
+  <!-- Main content area -->
   <main>
+
+    <!-- Product creation form -->
     <form action="#" class="create">
-
+      <!-- Input field for the product name -->
       <input id="name" type="text" placeholder="NOMBRE">
-      <input id="precio" type="number" placeholder="PRECIO">
-      <button id="btn-create">AGREGAR PRODUCTO</button>
 
+      <!-- Input field for the product price -->
+      <input id="precio" type="number" placeholder="PRECIO">
+
+      <!-- Button to add a new product -->
+      <button id="btn-create">AGREGAR PRODUCTO</button>
     </form>
+
+    <!-- Product table -->
     <table>
       <thead>
         <tr>
           <th>ID</th>
           <th>NOMBRE</th>
           <th>PRECIO</th>
-          <th>ACCIONES</th>
+          <th>ACCIONES</th> <!-- Edit and Delete buttons will go here -->
         </tr>
       </thead>
+
       <tbody id="product-table-body">
-        <!-- agregar filas de los productos nuevos-->
+        <!-- New product rows will be added here dynamically with JavaScript -->
       </tbody>
     </table>
 
   </main>
+
+
   <footer>
+    
   </footer>
+
+  <!-- JavaScript module for page functionality -->
   <script type="module" src="./src/js/main.js"></script>
 </body>
 

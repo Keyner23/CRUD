@@ -1,44 +1,36 @@
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 
+// Data storage
 let products = [];
 let productNames = new Set();
+let currentEditId = null;
+
+// DOM elements
 const $btn = document.getElementById("btn-create");
 const $nombre = document.getElementById("name");
 const $precio = document.getElementById("precio");
 const $productTableBody = document.getElementById("product-table-body");
-let currentEditId = null;
 
+// Handle button click
 $btn.addEventListener("click", function () {
     const nameUpper = $nombre.value.toUpperCase();
 
+    // Check empty fields
     if ($nombre.value === "" || $precio.value === "") {
-        Swal.fire({
-            title: "Error",
-            text: "Favor llenar todos los campos.",
-            icon: "error",
-            timer: 2000
-        });
+        Swal.fire({ title: "Error", text: "Favor llenar todos los campos.", icon: "error", timer: 2000 });
         return;
     }
 
-
+    // Check duplicate name (only when not editing)
     if (!currentEditId && productNames.has(nameUpper)) {
-        Swal.fire({
-            title: "Error",
-            text: `el producto ${$nombre.value} ya existe`,
-            icon: "error",
-            timer: 2500
-        });
+        Swal.fire({ title: "Error", text: `El producto ${$nombre.value} ya existe`, icon: "error", timer: 2500 });
         return;
     }
 
-    if (currentEditId) {
-        updateProduct();
-    } else {
-        saveProduct();
-    }
+    currentEditId ? updateProduct() : saveProduct();
 });
 
+// Save new product
 function saveProduct() {
     const nameUpper = $nombre.value.toUpperCase();
 
@@ -52,119 +44,101 @@ function saveProduct() {
     productNames.add(nameUpper);
     addRowToTable(newProduct);
 
-    Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Producto creado correctamente",
-        showConfirmButton: false,
-        timer: 1500
-    });
+    Swal.fire({ position: "top-end", icon: "success", title: "Producto creado correctamente", showConfirmButton: false, timer: 1500 });
 
     resetForm();
 }
 
+// Add row to table
 function addRowToTable(product) {
-    let nuevaFila = $productTableBody.insertRow();
+    let row = $productTableBody.insertRow();
+    row.insertCell(0).innerHTML = product.id;
+    row.insertCell(1).innerHTML = product.name;
+    row.insertCell(2).innerHTML = product.precio;
 
-    let cellId = nuevaFila.insertCell(0);
-    let cellNombre = nuevaFila.insertCell(1);
-    let cellPrecio = nuevaFila.insertCell(2);
-    let cellAccion = nuevaFila.insertCell(3);
+    let cellActions = row.insertCell(3);
 
-    cellId.innerHTML = product.id;
-    cellNombre.innerHTML = product.name;
-    cellPrecio.innerHTML = product.precio;
+    // Delete button
+    let btnDelete = document.createElement("button");
+    btnDelete.innerText = "Eliminar";
+    btnDelete.id = "btn-delete";
+    btnDelete.onclick = () => deleteProduct(row, product.id);
 
-    let btnEliminar = document.createElement("button");
-    btnEliminar.innerText = "Eliminar";
-    btnEliminar.id = "btn-delete";
-    btnEliminar.onclick = function () {
-        deleteProduct(nuevaFila, product.id);
-    };
+    // Edit button
+    let btnEdit = document.createElement("button");
+    btnEdit.innerText = "Editar";
+    btnEdit.id = "btn-update";
+    btnEdit.onclick = () => editProduct(product);
 
-    let btnUpdate = document.createElement("button");
-    btnUpdate.innerText = "Editar";
-    btnUpdate.id = "btn-update";
-    btnUpdate.onclick = () => {
-        editProduct(product);
-    };
-
-    cellAccion.appendChild(btnEliminar);
-    cellAccion.appendChild(btnUpdate);
+    cellActions.appendChild(btnDelete);
+    cellActions.appendChild(btnEdit);
 }
 
+// Load product data into form for editing
 function editProduct(product) {
     $nombre.value = product.name;
     $precio.value = product.precio.replace('$ ', '');
     currentEditId = product.id;
 }
 
+// Update existing product
 function updateProduct() {
     const nameUpper = $nombre.value.toUpperCase();
-    const originalProduct = products.find(p => p.id === currentEditId);
+    const original = products.find(p => p.id === currentEditId);
 
-
-    if (originalProduct.name !== nameUpper && productNames.has(nameUpper)) {
-        Swal.fire({
-            title: "Error",
-            text: "El nombre del producto ya existe.",
-            icon: "error",
-            timer: 2000
-        });
+    // Avoid duplicate name when editing
+    if (original.name !== nameUpper && productNames.has(nameUpper)) {
+        Swal.fire({ title: "Error", text: "El nombre del producto ya existe.", icon: "error", timer: 2000 });
         return;
     }
 
-
-    productNames.delete(originalProduct.name);
+    productNames.delete(original.name);
     productNames.add(nameUpper);
 
-    let updatedProduct = {
+    let updated = {
         id: currentEditId,
         name: nameUpper,
         precio: `$ ${$precio.value}`,
     };
 
-    products = products.map(product => product.id === currentEditId ? updatedProduct : product);
+    products = products.map(p => p.id === currentEditId ? updated : p);
 
-    const row = Array.from($productTableBody.rows).find(row => row.cells[0].innerText == currentEditId);
-    row.cells[1].innerText = updatedProduct.name;
-    row.cells[2].innerText = updatedProduct.precio;
+    // Update table row
+    const row = Array.from($productTableBody.rows).find(r => r.cells[0].innerText == currentEditId);
+    row.cells[1].innerText = updated.name;
+    row.cells[2].innerText = updated.precio;
+    row.cells[3].querySelector("#btn-update").onclick = () => editProduct(updated);
 
+    Swal.fire({ position: "top-end", icon: "success", title: "Producto actualizado correctamente", showConfirmButton: false, timer: 1500 });
+
+    resetForm();
+}
+
+// Delete product from list and table
+function deleteProduct(row, id) {
     Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Producto actualizado correctamente",
-        showConfirmButton: false,
-        timer: 1500
+        title: "¿SEGURO?",
+        text: "¿Desea borrar?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "¡Sí!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const productToDelete = products.find(p => p.id === id);
+            productNames.delete(productToDelete.name);
+            products = products.filter(p => p.id !== id);
+            row.remove();
+
+            Swal.fire({ title: "¡ELIMINADO!", text: "Fue eliminado correctamente.", icon: "success" });
+        }
     });
 
     resetForm();
 }
 
-function deleteProduct(fila, id) {
-    Swal.fire({
-        title: "¿SEGURO?",
-        text: "Desea borrar?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const productToDelete = products.find(p => p.id === id);
-            productNames.delete(productToDelete.name); // <-- NUEVO
-            products = products.filter(producto => producto.id !== id);
-            fila.remove();
-            Swal.fire({
-                title: "ELIMINADO!",
-                text: "Fue eliminado correctamente.",
-                icon: "success"
-            });
-        }
-    });
-}
-
+// Clear form and reset edit state
 function resetForm() {
     $nombre.value = "";
     $precio.value = "";
