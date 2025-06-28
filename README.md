@@ -1,4 +1,4 @@
-# CRUD INVENTARY
+# :floppy_disk: CRUD INVENTARY :floppy_disk:
 
 This is an inventory system with basic operations like a crude oil, where the name cannot be repeated and with a unique ID.
 
