@@ -1,4 +1,5 @@
-import Swal from "sweetalert2";
+Swal.fire('¡Funciona correctamente!');
+
 
 // Data storage
 let products = [];
