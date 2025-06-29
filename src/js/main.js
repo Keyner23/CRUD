@@ -1,6 +1,3 @@
-Swal.fire('¡Funciona correctamente!');
-
-
 // Data storage
 let products = [];
 let productNames = new Set();
